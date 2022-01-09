@@ -1,13 +1,14 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
-	"io/ioutil"
 	"regexp"
+	"crawler/fetcher"
 )
 
 func main(){
+	fetcher.TestPrint()
+	/*
 	resp, err := http.Get("http://www.zhenai.com/zhenghun")
 
 	if err !=nil{
@@ -23,7 +24,7 @@ func main(){
 		//fmt.Printf("%s \n", all)
 		printCityList(all)
 	}
-
+*/
 
 }
 

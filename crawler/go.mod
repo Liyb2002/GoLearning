@@ -1,3 +1,3 @@
-module main
+module crawler
 
 go 1.17
