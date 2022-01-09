@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"crawler/fetcher"
-	"time"
+//	"time"
 //	"crawler/worker"
 )
 
@@ -46,10 +46,9 @@ func printCityList(contents [] byte) []string{
 }
 
 func worker(id int, jobs <-chan string, results chan<- string) {
-    for j := range jobs {
+    for {
+		j:= <- jobs
         fmt.Println("worker", id, "started  job", j)
-        time.Sleep(time.Second)
-        fmt.Println("worker", id, "finished job", j)
         results <- "hi"
     }
 }
