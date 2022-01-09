@@ -4,13 +4,32 @@ import (
 	"fmt"
 	"regexp"
 	"crawler/fetcher"
+	"time"
+//	"crawler/worker"
 )
 
 func main(){
 	all, _ := fetcher.Fetch("http://www.zhenai.com/zhenghun")
 	cityUrls:= printCityList(all)
-	fmt.Println(cityUrls[1])
 
+	jobs :=make(chan string, len(cityUrls))
+	results := make(chan string, len(cityUrls))
+
+	for w:=0; w<10; w++{
+		go worker(w, jobs, results)
+	}
+
+	for j:=0; j<len(cityUrls); j++{
+		jobs <- cityUrls[j]
+	}
+
+	close(jobs)
+
+    for a := 0; a <= len(cityUrls); a++ {
+        <-results
+    }
+	//thisCity, _ := fetcher.Fetch(cityUrls[1])
+	//fmt.Println(string(thisCity))
 }
 
 func printCityList(contents [] byte) []string{
@@ -24,4 +43,13 @@ func printCityList(contents [] byte) []string{
 	}
 
 	return cityUrls
+}
+
+func worker(id int, jobs <-chan string, results chan<- string) {
+    for j := range jobs {
+        fmt.Println("worker", id, "started  job", j)
+        time.Sleep(time.Second)
+        fmt.Println("worker", id, "finished job", j)
+        results <- "hi"
+    }
 }
