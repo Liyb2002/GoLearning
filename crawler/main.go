@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"crawler/fetcher"
 //	"time"
-//	"crawler/worker"
+	"crawler/worker"
 )
 
 func main(){
@@ -13,10 +13,11 @@ func main(){
 	cityUrls:= printCityList(all)
 
 	jobs :=make(chan string, len(cityUrls))
+	result :=make(chan string, len(cityUrls))
 	done := make(chan bool)
 
 	for w:=0; w<3; w++{
-		go worker(w, jobs, done)
+		go worker.Work(w, jobs, result, done)
 	}
 
 	for j:=0; j<len(cityUrls); j++{
@@ -27,6 +28,10 @@ func main(){
 	<- done
 	//thisCity, _ := fetcher.Fetch(cityUrls[1])
 	//fmt.Println(string(thisCity))
+
+	for i:=0; i<len(cityUrls); i++{
+		fmt.Println(<-result)
+	}
 }
 
 func printCityList(contents [] byte) []string{
@@ -40,17 +45,4 @@ func printCityList(contents [] byte) []string{
 	}
 
 	return cityUrls
-}
-
-func worker(id int, jobs <-chan string, done chan<- bool ) {
-    for {
-		j, more:= <- jobs
-		if more{
-			fmt.Println("worker", id, "started  job", j)
-		}else{
-			fmt.Println("worker", id,"received all!")
-			done <- true
-			return
-		}
-    }
 }
