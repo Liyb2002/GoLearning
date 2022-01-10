@@ -15,7 +15,7 @@ func (l *Listener) GetLine(line []byte, ack *bool) error {
 }
 
 func main() {
-	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:42586")
+	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:80")
 	if err != nil {
 		log.Fatal(err)
 	}
