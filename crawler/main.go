@@ -13,10 +13,10 @@ func main(){
 	cityUrls:= printCityList(all)
 
 	jobs :=make(chan string, len(cityUrls))
-	results := make(chan string, len(cityUrls))
+	done := make(chan bool)
 
-	for w:=0; w<10; w++{
-		go worker(w, jobs, results)
+	for w:=0; w<3; w++{
+		go worker(w, jobs, done)
 	}
 
 	for j:=0; j<len(cityUrls); j++{
@@ -24,10 +24,7 @@ func main(){
 	}
 
 	close(jobs)
-
-    for a := 0; a <= len(cityUrls); a++ {
-        <-results
-    }
+	<- done
 	//thisCity, _ := fetcher.Fetch(cityUrls[1])
 	//fmt.Println(string(thisCity))
 }
@@ -45,10 +42,15 @@ func printCityList(contents [] byte) []string{
 	return cityUrls
 }
 
-func worker(id int, jobs <-chan string, results chan<- string) {
+func worker(id int, jobs <-chan string, done chan<- bool ) {
     for {
-		j:= <- jobs
-        fmt.Println("worker", id, "started  job", j)
-        results <- "hi"
+		j, more:= <- jobs
+		if more{
+			fmt.Println("worker", id, "started  job", j)
+		}else{
+			fmt.Println("worker", id,"received all!")
+			done <- true
+			return
+		}
     }
 }
